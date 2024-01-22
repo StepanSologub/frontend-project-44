@@ -21,6 +21,15 @@ const getRandomOperation = () => {
   }
   return result;
 };
+const getGCD = (num1, num2) => {
+  let a = num1;
+  let b = num2;
+  while (a !== b) {
+    if (a > b) a -= b;
+    else b -= a;
+  }
+  return b;
+};
 
 const game = (instruction, mode) => {
   console.log('Welcome to the Brain Games!');
@@ -32,7 +41,7 @@ const game = (instruction, mode) => {
   for (let test = 1; test <= 3; test += 1) {
     let answer = '';
     let correctAnswer = '';
-    const maxValue = 100;
+    const maxValue = 30;
     const numbers = [getRandomInt(maxValue), getRandomInt(maxValue)];
     const operation = getRandomOperation();
 
@@ -55,6 +64,10 @@ const game = (instruction, mode) => {
             break;
           default: break;
         }
+        break;
+      case 'gcd':
+        console.log(`Question: ${numbers[0]} ${numbers[1]}`);
+        correctAnswer = String(getGCD(numbers[0], numbers[1]));
         break;
       default: break;
     }
