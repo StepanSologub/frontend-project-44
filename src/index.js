@@ -1,88 +1,87 @@
 import * as client from './cli.js';
+import * as math from './math.js';
 
-const isEven = (num) => num % 2 === 0;
-const getRandomInt = (max) => Math.floor(Math.random() * max);
-const getRandomOperation = () => {
-  let result = '';
-  const num = getRandomInt(3);
-  switch (num) {
-    case 0:
-      result = '+';
-      break;
-    case 1:
-      result = '-';
-      break;
-    case 2:
-      result = '*';
-      break;
-    default:
-      result = '?';
-      break;
-  }
-  return result;
-};
-const getGCD = (num1, num2) => {
-  let a = num1;
-  let b = num2;
-  while (a !== b) {
-    if (a > b) a -= b;
-    else b -= a;
-  }
-  return b;
+const user = {
+  name: '',
+  answer: '',
 };
 
-const game = (instruction, mode) => {
+const game = {
+  correctAnswer: '',
+  numbers: [],
+  operation: '',
+  score: 0,
+  over: false,
+};
+
+const greeting = (user) => {
   console.log('Welcome to the Brain Games!');
-  const userName = client.askForName();
-  console.log(`Hello, ${userName}!`);
+  user.name = client.askForName();
+  console.log(`Hello, ${user.name}!`);
+};
+
+const setUp = (game) => {
+  const maxValue = 30;
+  game.numbers = [math.getRandomInt(maxValue), math.getRandomInt(maxValue)];
+  game.operation = math.getRandomOperation();
+};
+
+const generateQuestion = (game, mode) => {
+  switch (mode) {
+    case 'even':
+      console.log(`Question: ${game.numbers[0]}`);
+      game.correctAnswer = math.isEven(game.numbers[0]) ? 'yes' : 'no';
+      break;
+    case 'calc':
+      console.log(`Question: ${game.numbers[0]} ${game.operation} ${game.numbers[1]}`);
+      switch (game.operation) {
+        case '+':
+          game.correctAnswer = String(game.numbers[0] + game.numbers[1]);
+          break;
+        case '-':
+          game.correctAnswer = String(game.numbers[0] - game.numbers[1]);
+          break;
+        case '*':
+          game.correctAnswer = String(game.numbers[0] * game.numbers[1]);
+          break;
+        default: break;
+      }
+      break;
+    case 'gcd':
+      console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
+      game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
+      break;
+    default: break;
+  }
+};
+
+const processAnswer = (game, user) => {
+  user.answer = client.getAnswer();
+  if (user.answer === game.correctAnswer) {
+    console.log('Correct!');
+    game.score += 1;
+  } else {
+    console.log(`'${user.answer}' is wrong answer ;(. Correct answer was '${game.correctAnswer}'.`);
+    console.log(`Let's try again, ${user.name}!`);
+    game.over = true;
+  }
+};
+
+const congratulation = (game, user) => {
+  if (game.score === 3) console.log(`Congratulations, ${user.name}!`);
+};
+
+const runGame = (instruction, mode) => {
+  greeting(user);
   console.log(instruction);
 
-  let score = 0;
-  for (let test = 1; test <= 3; test += 1) {
-    let answer = '';
-    let correctAnswer = '';
-    const maxValue = 30;
-    const numbers = [getRandomInt(maxValue), getRandomInt(maxValue)];
-    const operation = getRandomOperation();
-
-    switch (mode) {
-      case 'even':
-        console.log(`Question: ${numbers[0]}`);
-        correctAnswer = isEven(numbers[0]) ? 'yes' : 'no';
-        break;
-      case 'calc':
-        console.log(`Question: ${numbers[0]} ${operation} ${numbers[1]}`);
-        switch (operation) {
-          case '+':
-            correctAnswer = String(numbers[0] + numbers[1]);
-            break;
-          case '-':
-            correctAnswer = String(numbers[0] - numbers[1]);
-            break;
-          case '*':
-            correctAnswer = String(numbers[0] * numbers[1]);
-            break;
-          default: break;
-        }
-        break;
-      case 'gcd':
-        console.log(`Question: ${numbers[0]} ${numbers[1]}`);
-        correctAnswer = String(getGCD(numbers[0], numbers[1]));
-        break;
-      default: break;
-    }
-
-    answer = client.getAnswer();
-    if (answer === correctAnswer) {
-      console.log('Correct!');
-      score += 1;
-    } else {
-      console.log(`'${answer}' is wrong answer ;(. Correct answer was '${correctAnswer}'.`);
-      console.log(`Let's try again, ${userName}!`);
-      break;
-    }
+  for (let question = 1; question <= 3; question += 1) {
+    setUp(game);
+    generateQuestion(game, mode);
+    processAnswer(game, user);
+    if (game.over) break;
   }
-  if (score === 3) console.log(`Congratulations, ${userName}!`);
+  congratulation(game, user);
 };
 
-export default game;
+export default runGame;

@@ -11,3 +11,5 @@ rules:
     - error
     - ignorePackages
     - js: always
+  no-param-reassign: 0
+  no-shadow: 0
