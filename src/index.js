@@ -51,7 +51,6 @@ const generateQuestion = (game, mode) => {
       console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
       game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
       break;
-    default: break;
   }
 };
 
