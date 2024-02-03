@@ -29,52 +29,57 @@ const setUp = (game) => {
   game.progression = math.getProgression(game.progressionLength, game.maxValue);
 };
 
-const generateQuestion = (game, mode) => {
+const runEvenMode = (game) => {
+  console.log(`Question: ${game.numbers[0]}`);
+  game.correctAnswer = math.isEven(game.numbers[0]) ? 'yes' : 'no';
+};
+
+const runCalcMode = (game) => {
+  console.log(`Question: ${game.numbers[0]} ${game.operation} ${game.numbers[1]}`);
+  switch (game.operation) {
+    case '+':
+      game.correctAnswer = String(game.numbers[0] + game.numbers[1]);
+      break;
+    case '-':
+      game.correctAnswer = String(game.numbers[0] - game.numbers[1]);
+      break;
+    case '*':
+      game.correctAnswer = String(game.numbers[0] * game.numbers[1]);
+      break;
+    default: break;
+  }
+};
+
+const runGCDMode = (game) => {
+  console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
+  game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
+};
+
+const runProgressionMode = (game) => {
   let elementPosition = 0;
   let question = '';
+  elementPosition = math.getRandomInt(game.progressionLength - 1);
+  game.correctAnswer = String(game.progression[elementPosition]);
+  question = `Question: ${game.progression[0]}`;
+  game.progression[elementPosition] = '..';
+  for (let i = 1; i < game.progressionLength; i += 1) {
+    question = `${question} ${game.progression[i]}`;
+  }
+  console.log(question);
+};
+
+const runPrimeMode = (game) => {
+  console.log(`Question: ${game.numbers[0]}`);
+  game.correctAnswer = math.isPrime(game.numbers[0]) ? 'yes' : 'no';
+};
+
+const generateQuestion = (game, mode) => {
   switch (mode) {
-    case 'even':
-      console.log(`Question: ${game.numbers[0]}`);
-      game.correctAnswer = math.isEven(game.numbers[0]) ? 'yes' : 'no';
-      break;
-
-    case 'calc':
-      console.log(`Question: ${game.numbers[0]} ${game.operation} ${game.numbers[1]}`);
-      switch (game.operation) {
-        case '+':
-          game.correctAnswer = String(game.numbers[0] + game.numbers[1]);
-          break;
-        case '-':
-          game.correctAnswer = String(game.numbers[0] - game.numbers[1]);
-          break;
-        case '*':
-          game.correctAnswer = String(game.numbers[0] * game.numbers[1]);
-          break;
-        default: break;
-      }
-      break;
-
-    case 'gcd':
-      console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
-      game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
-      break;
-
-    case 'progression':
-      elementPosition = math.getRandomInt(game.progressionLength - 1);
-      game.correctAnswer = String(game.progression[elementPosition]);
-      question = `Question: ${game.progression[0]}`;
-      game.progression[elementPosition] = '..';
-      for (let i = 1; i < game.progressionLength; i += 1) {
-        question = `${question} ${game.progression[i]}`;
-      }
-      console.log(question);
-      break;
-
-    case 'prime':
-      console.log(`Question: ${game.numbers[0]}`);
-      game.correctAnswer = math.isPrime(game.numbers[0]) ? 'yes' : 'no';
-      break;
-
+    case 'even': runEvenMode(game); break;
+    case 'calc': runCalcMode(game); break;
+    case 'gcd': runGCDMode(game); break;
+    case 'progression': runProgressionMode(game); break;
+    case 'prime': runPrimeMode(game); break;
     default: break;
   }
 };
