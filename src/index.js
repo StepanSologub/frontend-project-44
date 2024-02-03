@@ -6,7 +6,7 @@ const user = {
   answer: '',
 };
 
-const game = {
+export const game = {
   correctAnswer: '',
   numbers: [],
   operation: '',
@@ -80,7 +80,7 @@ const generateQuestion = (mode) => {
   }
 };
 
-const gameAnswer = () => {
+const processAnswer = () => {
   user.answer = client.getAnswer();
   if (user.answer === game.correctAnswer) {
     console.log('Correct!');
@@ -103,7 +103,7 @@ const runGame = (instruction, mode) => {
   for (let question = 1; question <= 3; question += 1) {
     setUp();
     generateQuestion(mode);
-    gameAnswer();
+    processAnswer();
     if (game.over) break;
   }
   congratulation();
