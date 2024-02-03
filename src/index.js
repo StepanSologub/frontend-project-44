@@ -10,6 +10,9 @@ const game = {
   correctAnswer: '',
   numbers: [],
   operation: '',
+  progression: [],
+  progressionLength: 10,
+  maxValue: 30,
   score: 0,
   over: false,
 };
@@ -21,17 +24,20 @@ const greeting = (user) => {
 };
 
 const setUp = (game) => {
-  const maxValue = 30;
-  game.numbers = [math.getRandomInt(maxValue), math.getRandomInt(maxValue)];
+  game.numbers = [math.getRandomInt(game.maxValue), math.getRandomInt(game.maxValue)];
   game.operation = math.getRandomOperation();
+  game.progression = math.getProgression(game.progressionLength, game.maxValue);
 };
 
 const generateQuestion = (game, mode) => {
+  let elementPosition = 0;
+  let question = '';
   switch (mode) {
     case 'even':
       console.log(`Question: ${game.numbers[0]}`);
       game.correctAnswer = math.isEven(game.numbers[0]) ? 'yes' : 'no';
       break;
+
     case 'calc':
       console.log(`Question: ${game.numbers[0]} ${game.operation} ${game.numbers[1]}`);
       switch (game.operation) {
@@ -47,10 +53,23 @@ const generateQuestion = (game, mode) => {
         default: break;
       }
       break;
+
     case 'gcd':
       console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
       game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
       break;
+
+    case 'progression':
+      elementPosition = math.getRandomInt(game.progressionLength - 1);
+      game.correctAnswer = String(game.progression[elementPosition]);
+      question = `Question: ${game.progression[0]}`;
+      game.progression[elementPosition] = '..';
+      for (let i = 1; i < game.progressionLength; i += 1) {
+        question = `${question} ${game.progression[i]}`;
+      }
+      console.log(question);
+      break;
+    default: break;
   }
 };
 

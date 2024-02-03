@@ -1,6 +1,9 @@
 export const isEven = (num) => num % 2 === 0;
 
-export const getRandomInt = (max) => Math.floor(Math.random() * max + 1);
+export const getRandomInt = (max) => {
+  const result = Math.floor(Math.random() * max);
+  return result === 0 ? 1 : result;
+};
 
 export const getRandomOperation = () => {
   let result = '';
@@ -30,4 +33,14 @@ export const getGCD = (num1, num2) => {
     else b -= a;
   }
   return b;
+};
+
+export const getProgression = (length, max) => {
+  const result = [];
+  result[0] = getRandomInt(max);
+  const delta = getRandomInt(max);
+  for (let i = 1; i < length; i += 1) {
+    result[i] = result[i - 1] + delta;
+  }
+  return result;
 };
