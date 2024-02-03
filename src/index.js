@@ -69,6 +69,12 @@ const generateQuestion = (game, mode) => {
       }
       console.log(question);
       break;
+
+    case 'prime':
+      console.log(`Question: ${game.numbers[0]}`);
+      game.correctAnswer = math.isPrime(game.numbers[0]) ? 'yes' : 'no';
+      break;
+
     default: break;
   }
 };
