@@ -1,112 +1,72 @@
 import * as client from './cli.js';
 import * as math from './math.js';
-
-const user = {
-  name: '',
-  answer: '',
-};
-
-export const game = {
-  correctAnswer: '',
-  numbers: [],
-  operation: '',
-  progression: [],
-  progressionLength: 10,
-  maxValue: 30,
-  score: 0,
-  over: false,
-};
+import runEvenMode from './games/even-mode.js';
+import runCalcMode from './games/calc-mode.js';
+import runGCDMode from './games/gcd-mode.js';
+import runProgressionMode from './games/progression-mode.js';
+import runPrimeMode from './games/prime-mode.js';
 
 const greeting = () => {
   console.log('Welcome to the Brain Games!');
-  user.name = client.askForName();
-  console.log(`Hello, ${user.name}!`);
+  const userName = client.askForName();
+  console.log(`Hello, ${userName}!`);
+  return userName;
 };
 
-const setUp = () => {
-  game.numbers = [math.getRandomInt(game.maxValue), math.getRandomInt(game.maxValue)];
-  game.operation = math.getRandomOperation();
-  game.progression = math.getProgression(game.progressionLength, game.maxValue);
+const getDataset = (maxValue, progressionLength) => {
+  const numbers = [math.getRandomInt(maxValue), math.getRandomInt(maxValue)];
+  const operation = math.getRandomOperation();
+  const progression = math.getProgression(maxValue, progressionLength);
+  return {
+    numbers,
+    operation,
+    progression,
+  };
 };
 
-const checkModes = (mode) => {
-  console.log(`Question: ${game.numbers[0]}`);
-  if (mode === 'even') game.correctAnswer = math.isEven(game.numbers[0]) ? 'yes' : 'no';
-  else if (mode === 'prime') game.correctAnswer = math.isPrime(game.numbers[0]) ? 'yes' : 'no';
-};
-
-const runCalcMode = () => {
-  console.log(`Question: ${game.numbers[0]} ${game.operation} ${game.numbers[1]}`);
-  switch (game.operation) {
-    case '+':
-      game.correctAnswer = String(game.numbers[0] + game.numbers[1]);
-      break;
-    case '-':
-      game.correctAnswer = String(game.numbers[0] - game.numbers[1]);
-      break;
-    case '*':
-      game.correctAnswer = String(game.numbers[0] * game.numbers[1]);
-      break;
-    default: break;
-  }
-};
-
-const runGCDMode = () => {
-  console.log(`Question: ${game.numbers[0]} ${game.numbers[1]}`);
-  game.correctAnswer = String(math.getGCD(game.numbers[0], game.numbers[1]));
-};
-
-const runProgressionMode = () => {
-  let elementPosition = 0;
-  let question = '';
-  elementPosition = math.getRandomInt(game.progressionLength - 1);
-  game.correctAnswer = String(game.progression[elementPosition]);
-  question = `Question: ${game.progression[0]}`;
-  game.progression[elementPosition] = '..';
-  for (let i = 1; i < game.progressionLength; i += 1) {
-    question = `${question} ${game.progression[i]}`;
-  }
-  console.log(question);
-};
-
-const generateQuestion = (mode) => {
+const generateQuestion = (mode, dataset, progressionLength) => {
   switch (mode) {
-    case 'even': checkModes(mode); break;
-    case 'calc': runCalcMode(); break;
-    case 'gcd': runGCDMode(); break;
-    case 'progression': runProgressionMode(); break;
-    case 'prime': checkModes(mode); break;
+    case 'even': return runEvenMode(dataset);
+    case 'calc': return runCalcMode(dataset);
+    case 'gcd': return runGCDMode(dataset);
+    case 'progression': return runProgressionMode(dataset, progressionLength);
+    case 'prime': return runPrimeMode(dataset);
     default: break;
   }
+  return 0;
 };
 
-const processAnswer = () => {
-  user.answer = client.getAnswer();
-  if (user.answer === game.correctAnswer) {
+const processResponse = (correctAnswer) => {
+  const userAnswer = client.getAnswer();
+  if (userAnswer === correctAnswer) {
     console.log('Correct!');
-    game.score += 1;
-  } else {
-    console.log(`'${user.answer}' is wrong answer ;(. Correct answer was '${game.correctAnswer}'.`);
-    console.log(`Let's try again, ${user.name}!`);
-    game.over = true;
+    return true;
   }
+  console.log(`'${userAnswer}' is wrong answer ;(. Correct answer was '${correctAnswer}'.`);
+  return false;
 };
 
-const congratulation = () => {
-  if (game.score === 3) console.log(`Congratulations, ${user.name}!`);
+let dataset = {
+  numbers: [],
+  operation: '',
+  progression: [],
 };
 
 const runGame = (instruction, mode) => {
-  greeting();
+  const userName = greeting();
   console.log(instruction);
-
   for (let question = 1; question <= 3; question += 1) {
-    setUp();
-    generateQuestion(mode);
-    processAnswer();
-    if (game.over) break;
+    const maxValue = 30;
+    const progressionLength = 10;
+    dataset = getDataset(maxValue, progressionLength);
+    const correctAnswer = generateQuestion(mode, dataset, progressionLength);
+    if (processResponse(correctAnswer)) {
+      if (question === 3) console.log(`Congratulations, ${userName}!`);
+    } else {
+      console.log(`Let's try again, ${userName}!`);
+      break;
+    }
   }
-  if (!game.over) congratulation();
 };
 
 export default runGame;

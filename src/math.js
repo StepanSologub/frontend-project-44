@@ -35,7 +35,7 @@ export const getGCD = (num1, num2) => {
   return b;
 };
 
-export const getProgression = (length, max) => {
+export const getProgression = (max, length) => {
   const result = [];
   result[0] = getRandomInt(max);
   const delta = getRandomInt(max);
