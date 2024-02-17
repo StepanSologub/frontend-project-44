@@ -106,7 +106,7 @@ const runGame = (instruction, mode) => {
     processAnswer();
     if (game.over) break;
   }
-  congratulation();
+  if (!game.over) congratulation();
 };
 
 export default runGame;
