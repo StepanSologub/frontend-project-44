@@ -36,13 +36,15 @@ const generateQuestion = (mode, dataset, progressionLength) => {
   return 0;
 };
 
-const processResponse = (correctAnswer) => {
+const processResponse = (correctAnswer, name, question) => {
   const userAnswer = client.getAnswer();
   if (userAnswer === correctAnswer) {
     console.log('Correct!');
+    if (question === 3) console.log(`Congratulations, ${name}!`);
     return true;
   }
   console.log(`'${userAnswer}' is wrong answer ;(. Correct answer was '${correctAnswer}'.`);
+  console.log(`Let's try again, ${name}!`);
   return false;
 };
 
@@ -60,12 +62,7 @@ const runGame = (instruction, mode) => {
     const progressionLength = 10;
     dataset = getDataset(maxValue, progressionLength);
     const correctAnswer = generateQuestion(mode, dataset, progressionLength);
-    if (processResponse(correctAnswer)) {
-      if (question === 3) console.log(`Congratulations, ${userName}!`);
-    } else {
-      console.log(`Let's try again, ${userName}!`);
-      break;
-    }
+    if (!processResponse(correctAnswer, userName, question)) break;
   }
 };
 
